@@ -1,12 +1,12 @@
 {
   "rewrites": [
     {
-      "source": "/api/users/:path*",
-      "destination": "http://18.228.48.67/users/:path*"
+      "source": "/api/time/:path*",
+      "destination": "http://100.58.186.7:8081/time/:path*"
     },
     {
-      "source": "/api/connections/:path*",
-      "destination": "http://18.228.48.67:8080/connections/:path*"
+      "source": "/api/partidas/:path*",
+      "destination": "http://100.58.186.7:8081/partidas/:path*"
     }
   ]
 }

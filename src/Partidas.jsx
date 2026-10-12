@@ -2,15 +2,16 @@ import { useAuth0 } from "@auth0/auth0-react";
 import React, { useEffect, useState } from "react";
 import LogoutButton from "./LogoutButton";
 
-const FLASK_API_URL = "http://localhost:5001";
-const SPRING_API_URL = "http://localhost:8080";
+const FLASK_API_URL = "http://100.58.186.7:8081";
+const SPRING_API_URL = "http://100.58.186.7:8080";
 
 export default function Partidas({ onNavigate }) {
-  const { user, isAuthenticated } = useAuth0();
   const [partidas, setPartidas] = useState([]);
   const [times, setTimes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [token, setToken] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
   const [formData, setFormData] = useState({
     idMandante: "",
     idVisitante: "",
@@ -21,7 +22,33 @@ export default function Partidas({ onNavigate }) {
   // Fetch times e partidas ao carregar a página
   useEffect(() => {
     fetchTimesAndPartidas();
-  }, []);
+  }, [token]);
+
+
+  const {
+    user,
+    isAuthenticated,
+    getAccessTokenSilently
+  } = useAuth0();
+
+  useEffect(() => {
+    const fetchTokenAndRoles = async () => {
+      try {
+        const accessToken = await getAccessTokenSilently();
+        setToken(accessToken);
+
+        const payload = JSON.parse(atob(accessToken.split(".")[1]));
+        const roles = payload["https://social-insper.com/roles"] || [];
+        setIsAdmin(roles.includes("ADMIN"));
+      } catch (e) {
+        console.error("Erro ao buscar token:", e);
+      }
+    };
+
+    if (isAuthenticated) {
+      fetchTokenAndRoles();
+    }
+  }, [isAuthenticated, getAccessTokenSilently]);
 
   const fetchTimesAndPartidas = async () => {
     try {
@@ -37,7 +64,11 @@ export default function Partidas({ onNavigate }) {
       setTimes(timesData);
 
       // Buscar partidas
-      const partidasResponse = await fetch(`${SPRING_API_URL}/partidas`);
+      const partidasResponse = await fetch(`${SPRING_API_URL}/partidas`, {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
       if (!partidasResponse.ok) {
         throw new Error("Erro ao buscar partidas");
       }
@@ -82,6 +113,7 @@ export default function Partidas({ onNavigate }) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({
           idMandante: formData.idMandante,
