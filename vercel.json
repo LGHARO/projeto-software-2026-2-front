@@ -10,7 +10,7 @@
     },
         {
       "source": "/api/partidas",
-      "destination": "http://100.58.186.7:8081/partidas"
+      "destination": "http://100.58.186.7:8080/partidas"
     },
     {
       "source": "/api/partidas/:path*",
