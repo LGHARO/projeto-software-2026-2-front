@@ -6,7 +6,7 @@
     },
     {
       "source": "/api/partidas/:path*",
-      "destination": "http://100.58.186.7:8081/partidas/:path*"
+      "destination": "http://100.58.186.7:8080/partidas/:path*"
     }
   ]
 }
