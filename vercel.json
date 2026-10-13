@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/api/times",
+      "destination": "http://100.58.186.7:8081/times"
+    },
+    {
       "source": "/api/times/:path*",
       "destination": "http://100.58.186.7:8081/times/:path*"
     },
